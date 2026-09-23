@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Discipline Tracker</title>
+<meta name="theme-color" content="#0F1522">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F6; --card:#FFFFFF; --ink:#141C2E; --muted:#6B7488; --line:#D9DEE8;
+  --accent:#1F4FD8; --accent-ink:#FFFFFF; --good:#1E8A5A; --warn:#C2571A; --soft:#E4E9F4; --gold:#B8860B;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1522; --card:#182033; --ink:#EEF1F8; --muted:#95A0B8; --line:#2A344A;
+    --accent:#6C8CFF; --accent-ink:#0F1522; --good:#4FCB8E; --warn:#F0955A; --soft:#222C42; --gold:#E2B84C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1522; --card:#182033; --ink:#EEF1F8; --muted:#95A0B8; --line:#2A344A;
+  --accent:#6C8CFF; --accent-ink:#0F1522; --good:#4FCB8E; --warn:#F0955A; --soft:#222C42; --gold:#E2B84C;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,textarea,select{font:inherit;color:inherit}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 40px}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 14px}
+.head h1{font-size:15px;font-weight:600;margin:0;color:var(--muted)}
+.head .date{font-size:15px;font-weight:500}
+
+/* now block */
+.now{background:var(--ink);color:var(--bg);border-radius:20px;padding:20px 20px 18px;margin-bottom:12px}
+.now .label{font-size:13px;opacity:.7;margin-bottom:6px}
+.now input.task{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.25);
+  color:inherit;font-size:19px;font-weight:600;padding:4px 0 8px;margin-bottom:12px}
+.now input.task::placeholder{color:inherit;opacity:.45}
+.presets{display:flex;gap:8px;margin-bottom:8px}
+.preset{border-radius:10px;padding:6px 12px;font-size:13px;font-weight:600;background:rgba(255,255,255,.12)}
+.preset.on{background:var(--bg);color:var(--ink)}
+.clock{font-size:64px;font-weight:700;line-height:1;letter-spacing:-1px;margin:4px 0 12px}
+.clock.running{color:#8FE3B8}
+.nowrow{display:flex;gap:10px;align-items:center}
+.btn{border-radius:12px;padding:12px 16px;font-weight:600;font-size:15px;min-height:46px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:rgba(255,255,255,.12);color:inherit}
+.distract{margin-left:auto;text-align:right;font-size:13px;opacity:.85}
+.distract b{display:block;font-size:22px;line-height:1}
+.hint{font-size:13px;opacity:.65;margin-top:12px}
+
+/* prayer strip */
+.prayer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.prayer .next{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.prayer .next b{font-size:18px}
+.prayer .next span{color:var(--muted);font-size:14px}
+.ptimes{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.pt{text-align:center;border-radius:10px;padding:8px 2px;background:var(--soft);font-size:12px;color:var(--muted)}
+.pt b{display:block;font-size:14px;color:var(--ink)}
+.pt.next{outline:2px solid var(--gold);outline-offset:-2px}
+.pt.done{background:var(--good);color:#fff}.pt.done b{color:#fff}
+.pt.office{cursor:pointer}
+.prow{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted);gap:8px;flex-wrap:wrap}
+.toggle{border-radius:10px;padding:6px 10px;background:var(--soft);font-size:13px;font-weight:600;color:var(--ink)}
+.toggle.on{background:var(--good);color:#fff}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card h2{font-size:15px;font-weight:600;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center}
+.card h2 span{font-weight:500;color:var(--muted);font-size:14px}
+.habit{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 0;border-top:1px solid var(--line)}
+.habit:first-of-type{border-top:0}
+.box{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);flex:none;display:grid;place-items:center;transition:background .15s}
+.habit.on .box{background:var(--good);border-color:var(--good)}
+.box svg{display:none;width:16px;height:16px}
+.habit.on .box svg{display:block}
+.habit .t{flex:1}
+.habit.on .t{color:var(--muted);text-decoration:line-through}
+.habit .when{font-size:13px;color:var(--muted)}
+.bar{height:6px;background:var(--soft);border-radius:4px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:width .25s}
+
+/* chain (Clear) */
+.chain{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}
+.chain:first-of-type{border-top:0}
+.chain .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chain .dots{display:flex;gap:3px}
+.chain .dots i{width:9px;height:9px;border-radius:3px;background:var(--soft)}
+.chain .dots i.on{background:var(--good)}
+.chain .c{min-width:28px;text-align:right;font-weight:600}
+
+/* week */
+.week{display:flex;gap:6px;justify-content:space-between;margin-top:8px}
+.day{flex:1;text-align:center;font-size:12px;color:var(--muted)}
+.day .dot{height:34px;border-radius:9px;background:var(--soft);margin-bottom:5px;display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--muted)}
+.day.good .dot{background:var(--good);color:#fff}
+.day.some .dot{background:var(--accent);color:var(--accent-ink)}
+.day.today .dot{outline:2px solid var(--ink);outline-offset:1px}
+.stats{display:flex;gap:10px;margin-top:12px}
+.stat{flex:1;background:var(--soft);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:22px;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
+
+/* weekly adab from the book */
+.adab{border-left:4px solid var(--gold)}
+.adab .ttl{font-size:16px;font-weight:600;margin:2px 0 2px}
+.adab .src{font-size:13px;color:var(--muted);margin-bottom:10px}
+.adab .item{font-size:14px;margin:10px 0 5px;line-height:1.4}
+.adab .ticks{display:flex;gap:5px;margin-bottom:6px}
+.adab .ticks button{flex:1;height:32px;border-radius:8px;background:var(--soft);font-size:12px;color:var(--muted)}
+.adab .ticks button.on{background:var(--good);color:#fff}
+.adab .ticks button.today{outline:2px solid var(--ink);outline-offset:-2px}
+.adab .q{margin-top:12px;background:var(--soft);border-radius:10px;padding:10px 12px;font-size:14px}
+.adab .q b{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+.adab .nav{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted)}
+.adab .nav button{background:var(--soft);border-radius:8px;padding:5px 10px;font-weight:600;color:var(--ink)}
+.pt small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+
+/* counter */
+.counter{display:flex;align-items:center;gap:12px}
+.counter .n{font-size:34px;font-weight:700;min-width:64px}
+.counter small{color:var(--muted);font-size:13px}
+.round{width:44px;height:44px;border-radius:12px;background:var(--soft);font-size:22px;font-weight:600;display:grid;place-items:center}
+
+/* review */
+.review label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.review textarea{width:100%;min-height:44px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--bg)}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:16px}
+.foot button{text-decoration:underline}
+.edit{display:none}
+.card.editing .edit{display:block}
+.edit input,.edit select{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--bg);margin:6px 0}
+.edit .btn{width:100%;margin-top:6px}
+.edit label{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><h1>Discipline tracker</h1><div class="date" id="dateLabel"></div></div>
+
+  <section class="now">
+    <div class="label">One thing, right now</div>
+    <input class="task" id="task" placeholder="What are you doing for this block?" autocomplete="off">
+    <div class="presets">
+      <button class="preset" data-min="10">10 min · Quran</button>
+      <button class="preset on" data-min="25">25 min · focus</button>
+      <button class="preset" data-min="50">50 min · deep</button>
+    </div>
+    <div class="clock" id="clock">25:00</div>
+    <div class="nowrow">
+      <button class="btn primary" id="startBtn">Start</button>
+      <button class="btn ghost" id="resetBtn">Reset</button>
+      <button class="distract" id="distractBtn"><b id="dCount">0</b>distractions</button>
+    </div>
+    <div class="hint">Urge to check something? Tap “distractions” and stay. Each tap is a win.</div>
+  </section>
+
+  <section class="prayer">
+    <div class="next"><b id="nextPrayer">—</b><span id="nextIn"></span></div>
+    <div class="ptimes" id="ptimes"></div>
+    <div class="prow">
+      <span>Tap Dhuhr, Asr or Maghrib once prayed</span>
+      <button class="toggle" id="remindBtn">Remind me</button>
+    </div>
+  </section>
+
+  <section class="card" id="habitCard">
+    <h2>Today <span id="habitScore">0 / 0</span></h2>
+    <div class="bar"><i id="habitBar"></i></div>
+    <div id="habits"></div>
+    <div class="edit">
+      <div id="editList"></div>
+      <label>Asr calculation</label>
+      <select id="asrSel"><option value="hanafi">Hanafi (later Asr, common in Bangladesh)</option><option value="standard">Standard (Shafi/Maliki/Hanbali)</option></select>
+      <label>Remind minutes before prayer</label>
+      <input id="leadIn" type="number" min="0" max="60" value="10">
+      <label>Jamaat times (blank = use calculated start time; Maghrib is always calculated)</label>
+      <input id="jFajr" type="time"><input id="jDhuhr" type="time"><input id="jAsr" type="time"><input id="jIsha" type="time">
+      <label>Latitude, longitude (default Dhaka)</label>
+      <input id="latIn" type="number" step="0.0001"><input id="lonIn" type="number" step="0.0001">
+      <button class="btn primary" id="saveHabits">Save</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Don’t break the chain <span>last 14 days</span></h2>
+    <div id="chains"></div>
+  </section>
+
+  <section class="card adab">
+    <h2>এই সপ্তাহের আদব <span id="adabWeek"></span></h2>
+    <div class="ttl" id="adabTitle"></div>
+    <div class="src">নবীজির পথে মানুষের মন জয় · তিনটি দৈনিক কাজ, প্রতিদিন টিক দিন</div>
+    <div id="adabItems"></div>
+    <div class="q"><b>রবিবারের প্রশ্ন</b><span id="adabQ"></span></div>
+    <div class="nav"><button id="adabPrev">← আগের</button><span>অধ্যায় বদলাতে চাইলে</span><button id="adabNext">পরের →</button></div>
+  </section>
+
+  <section class="card">
+    <h2>This week <span id="weekLabel"></span></h2>
+    <div class="week" id="week"></div>
+    <div class="stats">
+      <div class="stat"><b id="streak">0</b><span>day streak (5+ habits)</span></div>
+      <div class="stat"><b id="focusMin">0</b><span>focus minutes today</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Professor emails <span>target 10 / week</span></h2>
+    <div class="counter">
+      <div class="n" id="emails">0</div>
+      <button class="round" id="emailMinus" aria-label="Remove one">−</button>
+      <button class="round" id="emailPlus" aria-label="Add one">+</button>
+      <small id="emailHint"></small>
+    </div>
+  </section>
+
+  <section class="card review">
+    <h2>Evening review <span>3 lines, 3 minutes</span></h2>
+    <label for="rv1">Value I added today</label>
+    <textarea id="rv1" rows="1" placeholder="e.g. Sent 2 professor emails; finished L21 discovery module"></textarea>
+    <label for="rv2">What I avoided, and the excuse I used</label>
+    <textarea id="rv2" rows="1" placeholder="e.g. Skipped speech recording — told myself I was tired"></textarea>
+    <label for="rv3">One thing better tomorrow</label>
+    <textarea id="rv3" rows="1" placeholder="e.g. Record first, then Anki"></textarea>
+  </section>
+
+  <div class="foot"><button id="editBtn">Edit habits &amp; settings</button> · <button id="exportBtn">Export</button> · <button id="importBtn">Import</button> · <span id="saveState">saving locally</span><input type="file" id="importFile" accept="application/json,.json" style="display:none"></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const DEFAULT_HABITS=[
+    {id:'phone',   name:'No phone for first 30 min',  when:'05:30'},
+    {id:'move',    name:'Movement 20 min',            when:'05:35'},
+    {id:'english', name:'English hour',               when:'06:00'},
+    {id:'quran',   name:'Quran 5–10 min',             when:'07:00'},
+    {id:'deep',    name:'Deep block at work (60–90m)', when:'09:30'},
+    {id:'shutdown',name:'Shutdown ritual + 3 tasks',  when:'17:45'},
+    {id:'build',   name:'Build block',                when:'20:30'},
+    {id:'review',  name:'Evening review',             when:'21:30'},
+    {id:'sleep',   name:'In bed by 22:15',            when:'22:15'}
+  ];
+  const GOOD_DAY=5, LS='discipline-tracker-v1', TIMER_LS='discipline-timer-v1';
+  const PRAYERS=[['fajr','Fajr'],['dhuhr','Dhuhr'],['asr','Asr'],['maghrib','Maghrib'],['isha','Isha']];
+  const OFFICE=['dhuhr','asr','maghrib'];
+  const BOOK_START='2026-09-20'; // week 1 = week starting Sun 20 Sep 2026
+  const BOOK=[
+["তিরস্কার নয়, অভিযোগ নয়: সবর ও শুকরের জীবন",["কাউকে \"কেন করলে / কেন করলে না\" বলিনি (পরিবার, টিম, ড্রাইভার, দোকানদার)।","আজ একটা কিছু খারাপ হয়েছে: অভিযোগের বদলে \"আলহামদুলিল্লাহ\" বলেছি বা চুপ থেকেছি।","একটা সত্যিকারের অন্যায় দেখেছি: একবার, গোপনে, নরমভাবে শুধরে দিয়েছি, ধমক দিয়ে নয়।"],"এই সপ্তাহে কাকে তিরস্কার করেছি, আর তার বদলে কী করেছি?"],
+["শুকরিয়া: মানুষের কৃতজ্ঞতায় আল্লাহর কৃতজ্ঞতা",["একজনকে নাম ধরে, একটি নির্দিষ্ট কাজের জন্য ধন্যবাদ দিয়েছি।","একটি উপকারের প্রতিদান দিয়েছি, না পারলে তার জন্য দু'আ করেছি।","কাজের প্রশংসা করেছি, মানুষটির পুরোটার নয়; বাড়িয়ে বলিনি।"],"এই সপ্তাহে এমন কাকে ধন্যবাদ দিয়েছি, যাকে সাধারণত দিতাম না?"],
+["তারগীব: আগে প্রতিদানের সুসংবাদ, পরে আমলের আহ্বান",["একটি অনুরোধ করার আগে লিখে নিয়েছি, অন্য পক্ষ এ থেকে কী চায়।","অনুরোধটি শুরু করেছি তার লাভ দিয়ে, \"আমার দরকার\" দিয়ে নয়।","খরচ বা অসুবিধাটা স্পষ্ট বলেছি; কিছু লুকাইনি।"],"কোন অনুরোধটি ভালোভাবে গেল, কারণ আমি তার চাওয়া দিয়ে শুরু করেছিলাম?"],
+["ভাইয়ের খোঁজ রাখা: উম্মাহর প্রতি আন্তরিক মমতা",["একজনকে তার জীবন নিয়ে একটি সত্যিকার প্রশ্ন করেছি এবং উত্তরটি মনে রেখেছি।","কেউ অনুপস্থিত বা চুপচাপ ছিল, খোঁজ নিয়েছি।","না চাইতেই কারো জন্য এমন একটা কাজ করেছি, যাতে আমার সময় গেছে।"],"এই সপ্তাহে কাকে আগের চেয়ে ভালোভাবে চিনলাম?"],
+["মুচকি হাসি: এক নীরব সদাকা",["সকালে ঘরে প্রথম যাকে দেখেছি, তাকে হাসিমুখে দেখেছি।","কর্মস্থলে প্রথম যাকে দেখেছি এবং সালাম দেওয়ার সময় হেসেছি।","একজন অপরিচিতকে (গার্ড, ড্রাইভার, দোকানদার) হাসিমুখে দেখেছি।"],"মানুষের প্রতিক্রিয়া কি বদলেছে? কোথায় ভুলে গেছি?"],
+["নামের আমানত: মানুষকে সুন্দর নামে ডাকা",["আজ একটি নতুন নাম শিখেছি এবং একটি তথ্যসহ লিখে রেখেছি।","সালাম ও ধন্যবাদ দেওয়ার সময় মানুষের নাম ব্যবহার করেছি।","একজন জুনিয়র বা শিশুকে সম্মানের সঙ্গে নাম ধরে ডেকেছি।"],"রবিবারে নতুন নামগুলোর কয়টা মনে আছে?"],
+["শোনার আদব: নবীজি (সা.)-এর মতো মনোযোগ",["প্রতিটি কথোপকথনে ফোন উল্টে রেখেছি, শরীর বক্তার দিকে ফিরিয়েছি।","একজনকে কথা শেষ করতে দিয়েছি, মাঝে থামাইনি।","নিজের গল্প না বলে একটি অনুবর্তী প্রশ্ন করেছি।"],"এই সপ্তাহে কাকে থামিয়েছি, আর তাতে কী হারিয়েছি?"],
+["প্রজ্ঞার সুন্নাহ: মানুষের বোধগম্য ভাষায় কথা বলা",["একটি মিটিংয়ের আগে লিখে নিয়েছি, অন্য পক্ষ কী নিয়ে ভাবে।","একটি টেকনিক্যাল বিষয় শ্রোতার ভাষায় বুঝিয়েছি (কোনো জার্গন নয়)।","একটি কথোপকথন শুরু করেছি তার বিষয় দিয়ে, আমার বিষয় দিয়ে নয়।"],"কোন ব্যাখ্যাটি কাজে লাগল, কারণ আমি তার ভাষা ব্যবহার করেছিলাম?"],
+["ইকরাম: বড়কে সম্মান, ছোটকে স্নেহ",["একজন বয়োজ্যেষ্ঠ বা সিনিয়রকে সত্যিকার সৌজন্যে সম্মান দেখিয়েছি (উঠে দাঁড়ানো, বসতে দেওয়া, আগে শোনা)।","একজন জুনিয়র বা শিশুর প্রতি স্নেহ দেখিয়েছি: ধৈর্য, একটি ভালো কথা।","কারো মূল্য সততার সঙ্গে স্বীকার করেছি; তোষামোদ নয়।"],"এই সপ্তাহে কাকে সম্মান করেছি, আর তা কি আন্তরিক ছিল?"],
+["মিরা বর্জন: হক থেকেও তর্ক ছেড়ে দেওয়া",["নিজের মত একবার, শান্তভাবে বলেছি, তারপর থেমেছি।","হক থাকা সত্ত্বেও একটি তর্ক ছেড়ে দিয়েছি।","অনলাইনে বা কর্মস্থলে কোনো উসকানির জবাবে গলা তুলিনি, জবাব দিইনি।"],"কোন তর্ক থেকে সরে এসেছি, আর তারপর কী হলো?"],
+["সংশোধনে কোমলতা: অপমান ছাড়া সত্যের কথা",["একটি ভুল শুধরে দিয়েছি ধমক ছাড়া, গোপনে, কারণসহ।","\"আমি ভুলও হতে পারি\" বলেছি কেবল যখন তা সত্যি ছিল।","একটি সত্যিকার ভুলকে ভুল বলেছি, নরমভাবে, এড়িয়ে যাইনি।"],"অপমান না করে শুধরে দিয়েছি কি? ভয়ে কোনো সংশোধন এড়িয়ে গেছি কি?"],
+["তাওবার সাহস: ভুল হলে দ্রুত স্বীকার করা",["আজ একটি ভুল কেউ বলার আগেই মুখে স্বীকার করেছি।","\"ভুলে গেছি\" বা \"আমি ভুল করেছি\" বলেছি কোনো অজুহাত ছাড়া।","ঘুমানোর আগে দিনের ভুলগুলোর জন্য ইস্তিগফার করেছি।"],"এই সপ্তাহে কী স্বীকার করেছি, আর মানুষ কীভাবে নিয়েছে?"],
+["সালামে শুরু: কোমলতার দরজা খুলে দেওয়া",["চেনা-অচেনা যার সঙ্গেই দেখা হয়েছে, আগে সালাম দিয়েছি।","একটি কঠিন কথোপকথন সমস্যার আগে উষ্ণতা দিয়ে শুরু করেছি।","যে আলাপ কঠিন হয়ে যেতে পারত, তাতে কোমলতা ধরে রেখেছি।"],"কোন কঠিন আলাপ ভালো গেল, কারণ শুরুটা বন্ধুত্বপূর্ণ ছিল?"],
+["প্রশ্নের হিকমাহ: শ্রোতাকে নিজেই সত্যে পৌঁছাতে দেওয়া",["একটি বোঝানোর কাজ শুরু করেছি দুটি বিষয় দিয়ে, যাতে আমরা আগে থেকেই একমত।","একটি সৎ প্রশ্ন করেছি, যাতে মানুষটি নিজেই সিদ্ধান্তে পৌঁছায়।","যাচাই করেছি: পুরো ছবিটা দেখলেও কি সে \"হ্যাঁ\" বলত?"],"কোথায় সাধারণ ঐকমত্য এমন একটি কথা পৌঁছে দিল, যা তর্কে পৌঁছাত না?"],
+["জিহ্বার সংযম: কম বলা, বেশি শোনা",["একটি মিটিংয়ে অর্ধেকের কম সময় কথা বলেছি।","আজ একবারও নিজের কোনো অর্জনের কথা তুলিনি।","কথা বলার আগে একবার থেমেছি এবং একটি অপ্রয়োজনীয় মন্তব্য বাদ দিয়েছি।"],"সত্যি বলতে, এই সপ্তাহে কতটা কথা বলেছি?"],
+["শূরা: পরামর্শ নেওয়া ও কৃতিত্ব ফিরিয়ে দেওয়া",["নিজের মত দেওয়ার আগে একজনের মত চেয়েছি।","কারো ধারণা কাজে লাগলে প্রকাশ্যে তার নাম বলেছি।","যে সিদ্ধান্ত আগেই নেওয়া, তার জন্য পরামর্শের নাটক করিনি।"],"এই সপ্তাহে কার ধারণা গ্রহণ করেছি এবং স্বীকৃতি দিয়েছি?"],
+["ভাইয়ের চোখে দেখা: নিজের জন্য যা চাই, তার জন্যও তা",["একটি মতভেদের জবাব দেওয়ার আগে তার কারণটা এক লাইনে লিখে নিয়েছি।","একবার জিজ্ঞেস করেছি \"আপনি এভাবে দেখছেন কেন?\" এবং শুনেছি।","নিজের জন্য যা চাই, একটি বাস্তব কাজে অন্যের জন্য তা-ই চেয়েছি।"],"এই সপ্তাহে কার অবস্থান বুঝলাম, যা আগে বুঝিনি?"],
+["রহমত: এক দেহের মতো উম্মাহ",["একবার বলেছি \"আপনি কেন এমন বোধ করছেন, বুঝি\", এবং সত্যিই বুঝেছি।","একটি শিশু বা পরিবারের সদস্যকে প্রকাশ্যে স্নেহ দেখিয়েছি।","কারো কষ্টের জবাব দিয়েছি সাহায্য দিয়ে, উপদেশ দিয়ে নয়।"],"এই সপ্তাহে কোথায় দয়া দেখিয়েছি, আর কোথায় আটকে রেখেছি?"],
+["নিয়তের পবিত্রতা: আল্লাহ ও আখিরাতের নামে আহ্বান",["ঘুম থেকে উঠে দিনের লেনদেনের জন্য নিয়ত নবায়ন করেছি।","একটি অনুরোধ সম্মান, ন্যায় বা ঈমানের ভিত্তিতে করেছি, এবং সেই উদ্দেশ্য নিজেও ধরে রেখেছি।","যার কাজ পছন্দ হয়নি, তার সম্পর্কে ভালো উদ্দেশ্য ধরে নিয়েছি।"],"যে উদ্দেশ্যের কাছে আবেদন করেছি, তা কি আমার নিজেরও ছিল?"],
+["উপমায় শিক্ষা: নবীজি (সা.)-এর দৃষ্টান্তের পদ্ধতি",["একটি বিষয় ছবি, ইশারা বা বস্তু দিয়ে বুঝিয়েছি।","একটি বিমূর্ত কথার বদলে একটি বাস্তব উদাহরণ দিয়েছি।","কথা বোঝাতে কোনো অতিরঞ্জন বা বানানো গল্প বলিনি।"],"কোন ধারণাটি মনে গেঁথে গেল, কারণ আমি তা দেখিয়েছিলাম?"],
+["কল্যাণে প্রতিযোগিতা: নেক কাজে এগিয়ে যাওয়া",["দিনের জন্য নিজের একটি মাপা যায় এমন লক্ষ্য ঠিক করেছি এবং পূরণ করেছি।","একজনকে ভালো কাজ বা ভালো কাজের মানের প্রতিযোগিতায় ডেকেছি, মর্যাদার নয়।","কাউকে কোনো সহকর্মীর সঙ্গে খাটো করে তুলনা করিনি।"],"প্রতিযোগিতা কি কাজের মান বাড়াল, নাকি শুধু রেষারেষি?"],
+["গুণের স্বীকৃতি দিয়ে নসীহত শুরু",["একটি সংশোধনের আগে একটি সত্যিকার ভালো দিক আগে বলেছি।","প্রশংসা ছিল নির্দিষ্ট ও সত্য, ফেনা নয়।","সংশোধন শেষ করেছি মানুষটির প্রতি আস্থা প্রকাশ করে।"],"কোন সংশোধন ভালো গেল, কারণ শুরু হয়েছিল সত্যিকার প্রশংসা দিয়ে?"],
+["মা বালু আকওয়াম: নাম না নিয়ে সংশোধন",["একটি ভুল \"লোকদের কী হলো যে...\" বলে শুধরে দিয়েছি, কারো নাম না নিয়ে।","দায়ী ব্যক্তিকে ধমক না দিয়ে একটি জিনিস নিজেই ঠিক করেছি।","অন্যদের সামনে সংশোধনের একটি কথাও বলিনি।"],"এই সপ্তাহে কার দোষ ঢেকে রেখেছি?"],
+["বিনয়: নিজেকে দিয়ে উপদেশ শুরু",["কাউকে শুধরানোর আগে নিজের একই রকম ভুলের কথা সত্যভাবে বলেছি।","তার ব্যর্থতার বদলে নিজের উদাহরণকে মাপকাঠি করেছি।","একটি বিনয়ের কাজ করেছি যা কেউ দেখেনি।"],"আমার নিজের স্বীকারোক্তি কোথায় অন্যের সংশোধন সহজ করল?"],
+["রিফক: আদেশেও কোমলতা",["একটি আদেশকে প্রশ্ন বা পরামর্শে বদলে দিয়েছি।","প্রতিটি জরুরি নির্দেশ স্পষ্ট কিন্তু কোমলভাবে দিয়েছি, অবজ্ঞা ছাড়া।","কারো একটি কঠিন কাজ সহজ করে দিয়েছি।"],"কোন আদেশ প্রশ্ন হয়ে গেল, আর তাতে কী বদলাল?"],
+["সাতর: ভাইয়ের দোষ ঢেকে রাখা",["একটি দোষ ঢেকে রেখেছি, যা প্রকাশ করতে পারতাম।","অনলাইনে বা বাইরে কারো দোষ খুঁজিনি।","একটি বিব্রতকর মুহূর্ত থেকে কাউকে বেরোনোর পথ দিয়েছি।"],"এই সপ্তাহে কার সম্মান রক্ষা করেছি?"],
+["ছোট নেক কাজের কদর: প্রতিটি অগ্রগতির স্বীকৃতি",["কারো একটি ছোট উন্নতি লক্ষ্য করেছি এবং বলেছি।","নির্দিষ্ট কাজটির প্রশংসা করেছি, পরিমিতভাবে।","নিজের ছোট নিয়মিত আমলের \"প্রশংসা\" করেছি তা চালিয়ে গিয়ে, তা নিয়ে কথা বলে নয়।"],"এই সপ্তাহে কার ছোট পদক্ষেপ লক্ষ্য করেছি?"],
+["সুন্দর উপাধি: নবীজি (সা.)-এর দেওয়া পরিচয়",["একজনকে বলেছি তার মধ্যে যে সত্যিকার গুণ দেখি।","সেই গুণের সঙ্গে মানানসই একটি কাজ তাকে বিশ্বাস করে দিয়েছি।","মিথ্যা উপাধি নয়, তোষামোদ নয়।"],"যে নাম দিয়েছি, কে তাতে পৌঁছাল?"],
+["দ্বীন সহজ: আশার দরজা খোলা রাখা",["একজনকে বলেছি \"এটা ঠিক করা সহজ, আর প্রথম ধাপ এই\"।","নিজের একটি ভুলকে একটি ধাপে ভেঙে আজই তা করেছি।","একবার সতর্ক করার বদলে উৎসাহ দিয়েছি।"],"কোন ভুলটা ছোট মনে হলো, যখন তাকে প্রথম ধাপে নামিয়ে আনলাম?"],
+["কল্যাণের পথপ্রদর্শক: দুজনেরই সমান প্রতিদান",["একটি অনুরোধের সঙ্গে সত্যিকার লাভ যুক্ত করেছি এবং তা পূরণ হয়েছে কি না নিশ্চিত করেছি।","আজ করা প্রতিটি ওয়াদা রক্ষা করেছি।","কাজটি করার পর মানুষটিকে ধন্যবাদ দিয়েছি।"],"প্রতিটি প্রতিশ্রুত লাভ কি সত্যিই এসেছে?"]
+];
+
+  let state={habits:DEFAULT_HABITS.map(h=>({...h})), days:{}, weeks:{}, settings:{}};
+  let db=null, saveTimer=null, focusSec=25*60;
+
+  const $=id=>document.getElementById(id);
+  const pad=n=>String(n).padStart(2,'0');
+  const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const todayKey=()=>keyOf(new Date());
+  function settings(){ const s=state.settings||(state.settings={}); if(s.asr===undefined)s.asr='hanafi'; if(s.lead===undefined)s.lead=10; if(!s.lat)s.lat=23.8103; if(!s.lon)s.lon=90.4125; if(s.remind===undefined)s.remind=false; if(!s.jamaat)s.jamaat={fajr:'05:05',dhuhr:'12:55',asr:'16:15',isha:'20:00'}; if(s.bookOffset===undefined)s.bookOffset=0; return s; }
+  function day(k){ if(!state.days[k]) state.days[k]={done:{},emails:0,focus:0,distractions:0,review:{v:'',a:'',b:''},prayed:{}}; const d=state.days[k]; if(!d.prayed)d.prayed={}; return d; }
+  function doneCount(k){ const d=state.days[k]; return d? Object.values(d.done).filter(Boolean).length:0; }
+  function weekStart(d){ const s=new Date(d); s.setDate(d.getDate()-d.getDay()); s.setHours(0,0,0,0); return s; }
+  function week(){ const k=keyOf(weekStart(new Date())); if(!state.weeks)state.weeks={}; if(!state.weeks[k]) state.weeks[k]={}; const w=state.weeks[k]; if(!w.c)w.c={}; return w; }
+  function bookIndex(){ const ws=weekStart(new Date()), st=new Date(BOOK_START+'T00:00:00'); let i=Math.round((ws-st)/(7*864e5))+settings().bookOffset; return Math.max(0,Math.min(BOOK.length-1,i)); }
+
+  // ---- persistence ----
+  function loadLocal(){ try{ const raw=localStorage.getItem(LS); if(raw){ const s=JSON.parse(raw); if(s&&s.days) state=s; } }catch(e){} }
+  function saveLocal(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
+  function migrate(){
+    if(!Array.isArray(state.habits)||!state.habits.length) state.habits=DEFAULT_HABITS.map(h=>({...h}));
+    if(!state.habits.some(h=>h.id==='quran')){ const i=state.habits.findIndex(h=>h.id==='english'); state.habits.splice(i+1,0,{id:'quran',name:'Quran 5–10 min',when:'07:00'}); }
+    settings();
+  }
+  function scheduleSave(){
+    saveLocal(); renderAll();
+    if(!db) return;
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(async()=>{
+      try{ await db.doc('tracker/state').set(state); $('saveState').textContent='saved'; }
+      catch(e){ $('saveState').textContent='saved on this phone only'; }
+    },600);
+  }
+  async function connectDb(){
+    if(!window.claude||typeof window.claude.use!=='function') return;
+    try{
+      db=await window.claude.use('db');
+      if(!db) return;
+      const snap=await db.doc('tracker/state').get();
+      if(snap.exists){
+        const remote=snap.data();
+        if(remote&&remote.days){
+          const localDays=Object.keys(state.days).length, remoteDays=Object.keys(remote.days).length;
+          if(remoteDays>=localDays) state=remote;
+        }
+      }
+      migrate(); saveLocal(); renderAll(); $('saveState').textContent='synced';
+    }catch(e){ db=null; }
+  }
+
+  // ---- prayer times (PrayTimes.org method; Fajr/Isha 18°, Karachi) ----
+  const dr=Math.PI/180, rd=180/Math.PI;
+  const dsin=x=>Math.sin(x*dr), dcos=x=>Math.cos(x*dr), dtan=x=>Math.tan(x*dr);
+  const darcsin=x=>Math.asin(x)*rd, darccos=x=>Math.acos(x)*rd, darctan2=(y,x)=>Math.atan2(y,x)*rd, darccot=x=>Math.atan(1/x)*rd;
+  const fixAngle=a=>{a=a-360*Math.floor(a/360);return a<0?a+360:a;}, fixHour=a=>{a=a-24*Math.floor(a/24);return a<0?a+24:a;};
+  function julian(y,m,d){ if(m<=2){y-=1;m+=12;} const A=Math.floor(y/100), B=2-A+Math.floor(A/4); return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5; }
+  function sunPos(jd){ const D=jd-2451545.0, g=fixAngle(357.529+0.98560028*D), q=fixAngle(280.459+0.98564736*D), L=fixAngle(q+1.915*dsin(g)+0.020*dsin(2*g)), e=23.439-0.00000036*D, RA=darctan2(dcos(e)*dsin(L),dcos(L))/15; return {decl:darcsin(dsin(e)*dsin(L)), eqt:q/15-fixHour(RA)}; }
+  function prayerTimes(date){
+    const s=settings(), lat=s.lat, lon=s.lon, tz=-date.getTimezoneOffset()/60;
+    const jd=julian(date.getFullYear(),date.getMonth()+1,date.getDate())-lon/(15*24);
+    const T=(jdt,angle)=>{ const sp=sunPos(jdt); const v=(-dsin(angle)-dsin(lat)*dsin(sp.decl))/(dcos(lat)*dcos(sp.decl)); return darccos(Math.max(-1,Math.min(1,v)))/15; };
+    const mid=(jdt)=>{ const sp=sunPos(jdt); return fixHour(12-sp.eqt); };
+    let dhuhr=mid(jd+0.5), fajr=dhuhr-T(jd+dhuhr/24,18), maghrib=dhuhr+T(jd+dhuhr/24,0.833), isha=dhuhr+T(jd+dhuhr/24,18);
+    const spA=sunPos(jd+dhuhr/24), factor=s.asr==='hanafi'?2:1;
+    const asrAngle=-darccot(factor+dtan(Math.abs(lat-spA.decl)));
+    let asr=dhuhr+T(jd+dhuhr/24,asrAngle);
+    // second pass for accuracy
+    dhuhr=mid(jd+dhuhr/24); fajr=dhuhr-T(jd+fajr/24,18); maghrib=dhuhr+T(jd+maghrib/24,0.833); isha=dhuhr+T(jd+isha/24,18); asr=dhuhr+T(jd+asr/24,asrAngle);
+    const toLocal=h=>fixHour(h+tz-lon/15);
+    const out={fajr:toLocal(fajr),dhuhr:toLocal(dhuhr)+2/60,asr:toLocal(asr),maghrib:toLocal(maghrib)+1/60,isha:toLocal(isha)};
+    return out;
+  }
+  const hToStr=h=>{ let m=Math.round(h*60); const hh=Math.floor(m/60)%24, mm=m%60; const ap=hh>=12?'pm':'am'; return ((hh%12)||12)+':'+pad(mm)+' '+ap; };
+  let notifyTimers=[];
+  function renderPrayer(){
+    const now=new Date(), t=prayerTimes(now), nowH=now.getHours()+now.getMinutes()/60+now.getSeconds()/3600;
+    const prayed=day(todayKey()).prayed, jm=settings().jamaat||{};
+    const eff={}; for(const [id] of PRAYERS){ const j=jm[id]; if(j&&/^\d{2}:\d{2}$/.test(j)&&id!=='maghrib'){ eff[id]=+j.slice(0,2)+(+j.slice(3))/60; } else eff[id]=t[id]; }
+    let next=null;
+    for(const [id] of PRAYERS){ if(eff[id]>nowH){ next=id; break; } }
+    $('ptimes').innerHTML=PRAYERS.map(([id,name])=>`<div class="pt ${id===next?'next':''} ${prayed[id]?'done':''} ${OFFICE.includes(id)?'office':''}" data-id="${id}"><b>${hToStr(eff[id])}</b>${name}${eff[id]!==t[id]?'<small>starts '+hToStr(t[id])+'</small>':''}</div>`).join('');
+    if(next){ const mins=Math.round((eff[next]-nowH)*60); $('nextPrayer').textContent='Next: '+PRAYERS.find(p=>p[0]===next)[1]+' '+hToStr(eff[next]); $('nextIn').textContent=mins>=60?Math.floor(mins/60)+'h '+(mins%60)+'m':mins+' min'; }
+    else { $('nextPrayer').textContent='All prayers passed for today'; $('nextIn').textContent='Fajr '+hToStr(t.fajr)+' tomorrow'; }
+    $('remindBtn').classList.toggle('on',!!settings().remind);
+    $('remindBtn').textContent=settings().remind?'Reminders on':'Remind me';
+    scheduleNotifications(eff,nowH);
+  }
+  function scheduleNotifications(t,nowH){
+    notifyTimers.forEach(clearTimeout); notifyTimers=[];
+    if(!settings().remind||!('Notification' in window)||Notification.permission!=='granted') return;
+    const lead=settings().lead;
+    for(const [id,name] of PRAYERS){
+      const at=(t[id]-nowH)*3600*1000, pre=at-lead*60*1000;
+      if(pre>0) notifyTimers.push(setTimeout(()=>notify(name+' in '+lead+' minutes'),pre));
+      if(at>0) notifyTimers.push(setTimeout(()=>notify(name+' time — '+hToStr(t[id])),at));
+    }
+  }
+  function notify(text){ try{ new Notification('Prayer',{body:text}); }catch(e){} beep(); if(navigator.vibrate) navigator.vibrate([300,150,300]); }
+  $('remindBtn').onclick=async()=>{
+    const s=settings();
+    if(s.remind){ s.remind=false; scheduleSave(); return; }
+    if(!('Notification' in window)){ alert('This browser cannot show notifications. Use a prayer app for guaranteed reminders.'); return; }
+    const p=await Notification.requestPermission();
+    if(p==='granted'){ s.remind=true; scheduleSave(); } else alert('Notifications were not allowed. Reminders will only show while this page is open.');
+  };
+  $('ptimes').addEventListener('click',e=>{ const el=e.target.closest('.pt.office'); if(!el) return; const p=day(todayKey()).prayed; p[el.dataset.id]=!p[el.dataset.id]; if(navigator.vibrate)navigator.vibrate(15); scheduleSave(); });
+
+  // ---- render ----
+  const CHECK='<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg>';
+  function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function renderHabits(){
+    const k=todayKey(), d=day(k);
+    $('habits').innerHTML=state.habits.map(h=>`<button class="habit ${d.done[h.id]?'on':''}" data-id="${h.id}"><span class="box">${CHECK}</span><span class="t">${esc(h.name)}</span><span class="when">${esc(h.when||'')}</span></button>`).join('');
+    const n=doneCount(k), t=state.habits.length;
+    $('habitScore').textContent=n+' / '+t; $('habitBar').style.width=(t?100*n/t:0)+'%';
+  }
+  function renderChains(){
+    const now=new Date(); let html='';
+    for(const h of state.habits){
+      let dots='', streak=0, counting=true;
+      const cells=[];
+      for(let i=13;i>=0;i--){ const d=new Date(now); d.setDate(now.getDate()-i); const dd=state.days[keyOf(d)]; cells.push(!!(dd&&dd.done[h.id])); }
+      dots=cells.map(on=>`<i class="${on?'on':''}"></i>`).join('');
+      // streak: back from today (or yesterday if today not yet done)
+      let cur=new Date(now); if(!(state.days[keyOf(cur)]&&state.days[keyOf(cur)].done[h.id])) cur.setDate(cur.getDate()-1);
+      while(state.days[keyOf(cur)]&&state.days[keyOf(cur)].done[h.id]){ streak++; cur.setDate(cur.getDate()-1); if(streak>999)break; }
+      html+=`<div class="chain"><span class="n">${esc(h.name)}</span><span class="dots">${dots}</span><span class="c">${streak}</span></div>`;
+    }
+    $('chains').innerHTML=html;
+  }
+  function renderAdab(){
+    const w=week(), start=weekStart(new Date()), names=['র','সো','ম','বু','বৃ','শু','শ'], tk=todayKey();
+    const bi=bookIndex(), ch=BOOK[bi];
+    $('adabWeek').textContent='সপ্তাহ '+(bi+1)+' / 30';
+    $('adabTitle').textContent=(bi+1)+'. '+ch[0];
+    $('adabQ').textContent=ch[2];
+    let html='';
+    ch[1].forEach((item,ix)=>{
+      html+=`<div class="item">☐ ${esc(item)}</div><div class="ticks">`;
+      for(let i=0;i<7;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const k=keyOf(d); const on=w.c[ix]&&w.c[ix][k]; html+=`<button data-k="${k}" data-ix="${ix}" class="${on?'on':''} ${k===tk?'today':''}">${names[i]}</button>`; }
+      html+='</div>';
+    });
+    $('adabItems').innerHTML=html;
+  }
+  function renderWeek(){
+    const now=new Date(), start=weekStart(now), names=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    let html='';
+    for(let i=0;i<7;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const k=keyOf(d), n=doneCount(k); const cls=n>=GOOD_DAY?'good':(n>0?'some':''); html+=`<div class="day ${cls} ${k===todayKey()?'today':''}"><div class="dot">${n||''}</div>${names[i]}</div>`; }
+    $('week').innerHTML=html;
+    const end=new Date(start); end.setDate(start.getDate()+6);
+    $('weekLabel').textContent=start.getDate()+' '+start.toLocaleString('en',{month:'short'})+' – '+end.getDate()+' '+end.toLocaleString('en',{month:'short'});
+    let streak=0, cur=new Date(now); if(doneCount(keyOf(cur))<GOOD_DAY) cur.setDate(cur.getDate()-1);
+    while(doneCount(keyOf(cur))>=GOOD_DAY){ streak++; cur.setDate(cur.getDate()-1); if(streak>999)break; }
+    $('streak').textContent=streak; $('focusMin').textContent=Math.round(day(todayKey()).focus||0);
+    let e=0; for(let i=0;i<7;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const dd=state.days[keyOf(d)]; if(dd) e+=dd.emails||0; }
+    $('emails').textContent=e; $('emailHint').textContent=e>=10?'target met':(10-e)+' to go';
+  }
+  function renderReview(){
+    const r=day(todayKey()).review||{v:'',a:'',b:''};
+    if(document.activeElement!==$('rv1')) $('rv1').value=r.v||'';
+    if(document.activeElement!==$('rv2')) $('rv2').value=r.a||'';
+    if(document.activeElement!==$('rv3')) $('rv3').value=r.b||'';
+    $('dCount').textContent=day(todayKey()).distractions||0;
+  }
+  function renderAll(){ renderHabits(); renderChains(); renderAdab(); renderWeek(); renderReview(); renderPrayer(); }
+
+  // ---- interactions ----
+  $('habits').addEventListener('click',e=>{ const b=e.target.closest('.habit'); if(!b) return; const d=day(todayKey()); d.done[b.dataset.id]=!d.done[b.dataset.id]; if(navigator.vibrate) navigator.vibrate(15); scheduleSave(); });
+  $('emailPlus').onclick=()=>{ day(todayKey()).emails=(day(todayKey()).emails||0)+1; scheduleSave(); };
+  $('emailMinus').onclick=()=>{ const d=day(todayKey()); d.emails=Math.max(0,(d.emails||0)-1); scheduleSave(); };
+  ['rv1','rv2','rv3'].forEach((id,i)=>{ $(id).addEventListener('input',()=>{ const r=day(todayKey()).review; r[['v','a','b'][i]]=$(id).value; if($('rv1').value||$('rv2').value||$('rv3').value) day(todayKey()).done.review=true; scheduleSave(); }); });
+  $('adabItems').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const w=week(); const ix=b.dataset.ix; if(!w.c[ix])w.c[ix]={}; w.c[ix][b.dataset.k]=!w.c[ix][b.dataset.k]; if(navigator.vibrate)navigator.vibrate(15); scheduleSave(); });
+  $('adabPrev').onclick=()=>{ if(bookIndex()>0){ settings().bookOffset--; scheduleSave(); } };
+  $('adabNext').onclick=()=>{ if(bookIndex()<BOOK.length-1){ settings().bookOffset++; scheduleSave(); } };
+  $('editBtn').onclick=()=>{
+    const c=$('habitCard'); c.classList.toggle('editing');
+    if(c.classList.contains('editing')){
+      const s=settings();
+      $('editList').innerHTML=state.habits.map((h,i)=>`<input data-i="${i}" value="${esc(h.name)}" placeholder="Habit name">`).join('')+`<input data-i="new" placeholder="Add a habit (leave blank to skip)">`;
+      $('asrSel').value=s.asr; $('leadIn').value=s.lead; $('latIn').value=s.lat; $('lonIn').value=s.lon;
+      $('jFajr').value=s.jamaat.fajr||''; $('jDhuhr').value=s.jamaat.dhuhr||''; $('jAsr').value=s.jamaat.asr||''; $('jIsha').value=s.jamaat.isha||'';
+      c.scrollIntoView({behavior:'smooth'});
+    }
+  };
+  $('saveHabits').onclick=()=>{
+    const next=[]; [...$('editList').querySelectorAll('input')].forEach(inp=>{ const v=inp.value.trim(); if(!v) return; if(inp.dataset.i==='new') next.push({id:'h'+Date.now(),name:v,when:''}); else next.push({...state.habits[+inp.dataset.i],name:v}); });
+    if(next.length) state.habits=next;
+    const s=settings(); s.asr=$('asrSel').value; s.lead=Math.max(0,+$('leadIn').value||0); s.lat=+$('latIn').value||s.lat; s.lon=+$('lonIn').value||s.lon;
+    s.jamaat={fajr:$('jFajr').value,dhuhr:$('jDhuhr').value,asr:$('jAsr').value,isha:$('jIsha').value};
+    $('habitCard').classList.remove('editing'); scheduleSave();
+  };
+
+  // ---- timer ----
+  let endAt=0, tick=null;
+  function fmt(s){ s=Math.max(0,Math.round(s)); return pad(Math.floor(s/60))+':'+pad(s%60); }
+  function saveTimerLS(){ try{ localStorage.setItem(TIMER_LS,JSON.stringify({endAt,task:$('task').value,focusSec})); }catch(e){} }
+  function loadTimer(){ try{ const t=JSON.parse(localStorage.getItem(TIMER_LS)||'null'); if(!t) return; if(t.focusSec){ focusSec=t.focusSec; setPreset(); } if(t.task) $('task').value=t.task; if(t.endAt>Date.now()){ endAt=t.endAt; run(); } }catch(e){} }
+  function setPreset(){ document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('on',+b.dataset.min*60===focusSec)); if(!tick) $('clock').textContent=fmt(focusSec); }
+  document.querySelectorAll('.preset').forEach(b=>b.onclick=()=>{ if(tick) return; focusSec=+b.dataset.min*60; setPreset(); saveTimerLS(); });
+  function run(){ clearInterval(tick); $('clock').classList.add('running'); $('startBtn').textContent='Running'; tick=setInterval(()=>{ const left=(endAt-Date.now())/1000; $('clock').textContent=fmt(left); if(left<=0) finish(); },250); }
+  function finish(){
+    clearInterval(tick); tick=null; endAt=0; saveTimerLS();
+    $('clock').classList.remove('running'); $('clock').textContent='Done'; $('startBtn').textContent='Start';
+    const d=day(todayKey()); d.focus=(d.focus||0)+focusSec/60; if(focusSec===600) d.done.quran=true;
+    beep(); if(navigator.vibrate) navigator.vibrate([200,100,200]); scheduleSave();
+  }
+  function beep(){ try{ const ctx=new (window.AudioContext||window.webkitAudioContext)(); const o=ctx.createOscillator(), g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=880; g.gain.value=.15; o.start(); setTimeout(()=>{o.stop();ctx.close();},600); }catch(e){} }
+  $('startBtn').onclick=()=>{ if(tick) return; endAt=Date.now()+focusSec*1000; saveTimerLS(); run(); };
+  $('resetBtn').onclick=()=>{ clearInterval(tick); tick=null; endAt=0; saveTimerLS(); $('clock').classList.remove('running'); $('clock').textContent=fmt(focusSec); $('startBtn').textContent='Start'; };
+  $('distractBtn').onclick=()=>{ const d=day(todayKey()); d.distractions=(d.distractions||0)+1; if(navigator.vibrate) navigator.vibrate(10); scheduleSave(); };
+  $('task').addEventListener('input',saveTimerLS);
+
+  // ---- export / import ----
+  $('exportBtn').onclick=async()=>{
+    const json=JSON.stringify(state);
+    try{ await navigator.clipboard.writeText(json); }catch(e){}
+    try{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([json],{type:'application/json'})); a.download='discipline-tracker-'+todayKey()+'.json'; document.body.appendChild(a); a.click(); a.remove(); }catch(e){}
+    $('saveState').textContent='copied to clipboard';
+  };
+  $('importBtn').onclick=()=>{
+    const useFile=confirm('OK = pick a file.\nCancel = paste the exported text instead.');
+    if(useFile){ $('importFile').click(); return; }
+    const txt=prompt('Paste the exported text'); if(txt) applyImport(txt);
+  };
+  $('importFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>applyImport(r.result); r.readAsText(f); e.target.value=''; };
+  function applyImport(txt){ try{ const s=JSON.parse(txt); if(!s||!s.days) throw 0; state=s; migrate(); scheduleSave(); $('saveState').textContent='imported'; }catch(e){ alert('That is not a valid export.'); } }
+  if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+
+  // ---- boot ----
+  $('dateLabel').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  loadLocal(); migrate(); renderAll(); loadTimer(); connectDb();
+  let lastKey=todayKey();
+  setInterval(()=>{ if(todayKey()!==lastKey){ lastKey=todayKey(); renderAll(); } else renderPrayer(); },30000);
+})();
+</script>
+</body>
+</html>
