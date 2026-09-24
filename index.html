@@ -14,19 +14,19 @@
 <style>
 :root{
   --bg:#EEF1F6; --card:#FFFFFF; --ink:#141C2E; --muted:#6B7488; --line:#D9DEE8;
-  --accent:#1F4FD8; --accent-ink:#FFFFFF; --good:#1E8A5A; --warn:#C2571A; --soft:#E4E9F4; --gold:#B8860B;
+  --accent:#1F4FD8; --accent-ink:#FFFFFF; --good:#1E8A5A; --warn:#C2571A; --soft:#E4E9F4; --gold:#B8860B; --good-soft:#DCF0E5;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#0F1522; --card:#182033; --ink:#EEF1F8; --muted:#95A0B8; --line:#2A344A;
-    --accent:#6C8CFF; --accent-ink:#0F1522; --good:#4FCB8E; --warn:#F0955A; --soft:#222C42; --gold:#E2B84C;
+    --accent:#6C8CFF; --accent-ink:#0F1522; --good:#4FCB8E; --warn:#F0955A; --soft:#222C42; --gold:#E2B84C; --good-soft:#1B3A2E;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0F1522; --card:#182033; --ink:#EEF1F8; --muted:#95A0B8; --line:#2A344A;
-  --accent:#6C8CFF; --accent-ink:#0F1522; --good:#4FCB8E; --warn:#F0955A; --soft:#222C42; --gold:#E2B84C;
+  --accent:#6C8CFF; --accent-ink:#0F1522; --good:#4FCB8E; --warn:#F0955A; --soft:#222C42; --gold:#E2B84C; --good-soft:#1B3A2E;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
 *,*::before,*::after{box-sizing:inherit}
@@ -68,8 +68,8 @@ input,textarea,select{font:inherit;color:inherit}
 .ptimes{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .pt{text-align:center;border-radius:10px;padding:8px 2px;background:var(--soft);font-size:12px;color:var(--muted)}
 .pt b{display:block;font-size:14px;color:var(--ink)}
-.pt.next{outline:2px solid var(--gold);outline-offset:-2px}
-.pt.done{background:var(--good);color:#fff}.pt.done b{color:#fff}
+.pt.upnext{outline:2px solid var(--gold);outline-offset:-2px}
+.pt.done{background:var(--good-soft);color:var(--good);font-weight:600}.pt.done b{color:var(--ink)}.pt.done::before{content:'\2713';display:block;font-size:13px;line-height:1;margin-bottom:2px;color:var(--good)}
 .pt.office{cursor:pointer}
 .prow{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted);gap:8px;flex-wrap:wrap}
 .toggle{border-radius:10px;padding:6px 10px;background:var(--soft);font-size:13px;font-weight:600;color:var(--ink)}
@@ -369,7 +369,7 @@ input,textarea,select{font:inherit;color:inherit}
     const eff={}; for(const [id] of PRAYERS){ const j=jm[id]; if(j&&/^\d{2}:\d{2}$/.test(j)&&id!=='maghrib'){ eff[id]=+j.slice(0,2)+(+j.slice(3))/60; } else eff[id]=t[id]; }
     let next=null;
     for(const [id] of PRAYERS){ if(eff[id]>nowH){ next=id; break; } }
-    $('ptimes').innerHTML=PRAYERS.map(([id,name])=>`<div class="pt ${id===next?'next':''} ${prayed[id]?'done':''} ${OFFICE.includes(id)?'office':''}" data-id="${id}"><b>${hToStr(eff[id])}</b>${name}${eff[id]!==t[id]?'<small>starts '+hToStr(t[id])+'</small>':''}</div>`).join('');
+    $('ptimes').innerHTML=PRAYERS.map(([id,name])=>`<div class="pt ${id===next?'upnext':''} ${prayed[id]?'done':''} ${OFFICE.includes(id)?'office':''}" data-id="${id}"><b>${hToStr(eff[id])}</b>${name}${eff[id]!==t[id]?'<small>starts '+hToStr(t[id])+'</small>':''}</div>`).join('');
     if(next){ const mins=Math.round((eff[next]-nowH)*60); $('nextPrayer').textContent='Next: '+PRAYERS.find(p=>p[0]===next)[1]+' '+hToStr(eff[next]); $('nextIn').textContent=mins>=60?Math.floor(mins/60)+'h '+(mins%60)+'m':mins+' min'; }
     else { $('nextPrayer').textContent='All prayers passed for today'; $('nextIn').textContent='Fajr '+hToStr(t.fajr)+' tomorrow'; }
     $('remindBtn').classList.toggle('on',!!settings().remind);
