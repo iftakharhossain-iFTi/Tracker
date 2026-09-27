@@ -139,12 +139,70 @@ section{margin-top:28px}
 .adab .item{font-size:15px;line-height:1.5;margin:12px 0 6px}
 .ticks{display:flex;gap:5px}
 .ticks button{flex:1;height:34px;border-radius:9px;background:var(--surface);border:1px solid var(--line);font-size:12px;color:var(--muted)}
-.ticks button.on{background:var(--good);border-color:var(--good);color:#fff}
+.ticks button.yes{background:var(--good);border-color:var(--good);color:#fff;font-weight:700}
+.ticks button.no{background:var(--warn);border-color:var(--warn);color:#fff;font-weight:700}
 .ticks button.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.ticks button:disabled{opacity:.35}
+.adab .item{display:flex;gap:8px;align-items:baseline}
+.adab .item .txt{flex:1}
+.adab .item .sc{font-size:12px;color:var(--muted);white-space:nowrap}
+.adab .tag{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:1px 6px;margin-right:4px;vertical-align:middle}
+.legend{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.5}
 .adab .q{margin-top:14px;padding:11px 13px;border-radius:12px;background:var(--accent-soft);font-size:14.5px;line-height:1.5}
 .adab .q b{display:block;font-size:12px;color:var(--muted);margin-bottom:2px;font-weight:600}
+.wg{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(7,1fr);gap:4px;align-items:center}
+.wg .hd{font-size:11px;text-align:center;color:var(--muted);padding-bottom:2px}
+.wg .hd.today{color:var(--ink);font-weight:700}
+.wg .nm{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:4px}
+.wg button{height:30px;border-radius:8px;background:var(--track);border:1px solid transparent}
+.wg button.on{background:var(--good)}
+.wg button.today{border-color:var(--ink)}
+.wg .tot{font-size:11px;text-align:center;color:var(--muted);padding-top:2px}
+.ans{display:flex;gap:6px;margin-top:10px}
+.ans button.sel.yes{background:var(--good);color:#fff;border-color:var(--good)} .ans button.sel.no{background:var(--warn);color:#fff;border-color:var(--warn)}
+.ans button{flex:1;padding:9px 6px;border-radius:10px;font-weight:700;font-size:14px;background:var(--surface);border:1px solid var(--line)}
+.ans button.yes{color:var(--good)} .ans button.no{color:var(--warn)}
+.ans button:disabled{opacity:.45}
+.q .meta{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+.q .done{margin-top:8px;font-size:14px;color:var(--good);font-weight:600}
 .adab .nav{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted)}
 .adab .nav button{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:9px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-weight:600}
+
+/* people */
+.pp .due{background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+.pp .due b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.pp .due button{display:block;width:100%;text-align:left;padding:5px 0;border-top:1px solid var(--line)}
+.pp .due button:first-of-type{border-top:0}
+.touch{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;background:var(--surface)}
+.touch.on{border-color:var(--good)}
+.touch .row{display:flex;gap:10px;align-items:center}
+.touch .kind{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);min-width:34px}
+.touch input.nm{flex:1;border:0;border-bottom:1px solid var(--line);background:transparent;padding:6px 2px;font-weight:600;font-size:16px;min-width:0}
+.touch select{border:1px solid var(--line);border-radius:9px;padding:6px 8px;background:var(--bg);font-size:13px;max-width:120px}
+.touch .where{font-size:12.5px;color:var(--muted);margin:6px 0 0 44px}
+.touch .steps{display:flex;gap:6px;margin:10px 0 0 44px;flex-wrap:wrap}
+.touch .steps button{font-size:12px;padding:5px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.touch .steps button.on{background:var(--good);border-color:var(--good);color:#fff}
+.touch textarea{width:100%;margin:8px 0 0;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);font-size:14px;min-height:40px;resize:vertical}
+.touch .qs{margin:8px 0 0 44px;font-size:13px;color:var(--muted);line-height:1.5}
+.touch .qs b{color:var(--ink);font-weight:600}
+.touch .save{margin:8px 0 0 44px;font-size:13px;font-weight:600;color:var(--accent)}
+.pp .seq{font-size:12.5px;color:var(--muted);line-height:1.55;margin:4px 0 12px}
+.pp .seq b{color:var(--ink);font-weight:600}
+.pplan{display:grid;grid-template-columns:44px 1fr 1fr;gap:5px 6px;align-items:center;margin-top:8px}
+.pplan .d{font-size:12px;color:var(--muted)} .pplan .d.today{color:var(--ink);font-weight:700}
+.pplan input{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--surface);font-size:13px;min-width:0}
+.pplan .hd{font-size:11px;color:var(--muted);text-align:center}
+.pplan input.on{border-color:var(--good)}
+.fri{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:13.5px}
+.cards{margin-top:14px}
+.card-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.card-row:first-of-type{border-top:0}
+.card-row .n{flex:1;font-weight:600}
+.card-row .m{font-size:12px;color:var(--muted)}
+.card-row .m.due{color:var(--warn);font-weight:600}
+.sheet textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:var(--surface);margin-bottom:6px;min-height:44px;resize:vertical}
+.sheet .del{color:var(--warn);font-weight:600;margin-top:10px}
 
 /* emails */
 .mail{display:flex;align-items:center;gap:14px}
@@ -245,6 +303,55 @@ section{margin-top:28px}
   </section>
 
   <section>
+    <div class="sh"><h2>This week</h2><span>tap any day to fix a missed tick</span></div>
+    <div class="wg">
+      <div></div><div v-for="d in weekDays" :key="'h'+d.k" class="hd" :class="{today:d.k===todayKey}">{{ d.en.slice(0,2) }}</div>
+      <template v-for="hb in state.habits" :key="'g'+hb.id">
+        <div class="nm">{{ hb.name }}</div>
+        <button v-for="d in weekDays" :key="hb.id+d.k" :class="{on:isDone(d.k,hb.id),today:d.k===todayKey}" @click="toggleDay(d.k,hb.id)" :aria-label="hb.name+' '+d.en"></button>
+      </template>
+      <div class="nm">total</div><div v-for="d in weekDots" :key="'t'+d.k" class="tot mono">{{ d.n }}</div>
+    </div>
+  </section>
+
+  <section class="pp">
+    <div class="sh"><h2>People · 1 new + 1 old</h2><span class="mono">{{ touchesDone }} / 2 today</span></div>
+    <div class="seq"><b>Sequence:</b> night before, pick the two → 60 s before, read the card → salam + name → one question → listen → share one true thing → offer or ask → fix the next date → log within an hour.</div>
+
+    <div v-if="isFriday" class="fri"><span><b>Friday plan, 20 min.</b> Fill next week's 14 names below and update the cards.</span><button class="toggle" :class="{on:weekRec.planned}" @click="weekRec.planned=!weekRec.planned">{{ weekRec.planned?'Done':'Mark done' }}</button></div>
+
+    <div v-if="dueCards.length" class="due"><b>Due for a touch</b><button v-for="c in dueCards" :key="c.id" @click="useCard(c)">{{ c.name }} <span style="color:var(--muted)">· {{ c.cat }} · last {{ c.last||'—' }}</span></button></div>
+
+    <div v-for="kind in ['new','old']" :key="kind" class="touch" :class="{on:touch[kind].met}">
+      <div class="row"><span class="kind">{{ kind }}</span><input class="nm" v-model="touch[kind].name" :placeholder="hint(kind).who"><select v-model="touch[kind].cat"><option v-for="c in CATS" :key="c" :value="c">{{ c }}</option></select></div>
+      <div class="where">{{ hint(kind).where }}</div>
+      <div class="steps">
+        <button :class="{on:touch[kind].prep}" @click="touch[kind].prep=!touch[kind].prep">read card</button>
+        <button :class="{on:touch[kind].met}" @click="toggleMet(kind)">met / called</button>
+        <button :class="{on:touch[kind].showq}" @click="touch[kind].showq=!touch[kind].showq">questions</button>
+      </div>
+      <div v-if="touch[kind].showq" class="qs"><b>Ask:</b> {{ QS[touch[kind].cat||hint(kind).cat].q.join(' · ') }}<br><b>Share:</b> {{ QS[touch[kind].cat||hint(kind).cat].s }}</div>
+      <textarea v-if="touch[kind].met" v-model="touch[kind].note" placeholder="Log: one detail they told you · next touch date"></textarea>
+      <button v-if="touch[kind].met&&touch[kind].name" class="save" @click="saveCard(kind)">Save to {{ touch[kind].name }}'s card →</button>
+    </div>
+
+    <div class="pplan">
+      <div></div><div class="hd">new (in person)</div><div class="hd">old (call / visit)</div>
+      <template v-for="d in weekDays" :key="'p'+d.k">
+        <div class="d" :class="{today:d.k===todayKey}">{{ d.en }}</div>
+        <input :value="dayTouch(d.k).new.name" @input="dayTouch(d.k).new.name=$event.target.value" :placeholder="HINTS[d.en].new.cat" :class="{on:dayTouch(d.k).new.met}">
+        <input :value="dayTouch(d.k).old.name" @input="dayTouch(d.k).old.name=$event.target.value" :placeholder="HINTS[d.en].old.cat" :class="{on:dayTouch(d.k).old.met}">
+      </template>
+    </div>
+
+    <div class="cards">
+      <div class="sh"><h2 style="font-size:15px">Cards</h2><span>{{ state.people.length }} people · tap to edit</span></div>
+      <button v-for="c in sortedCards" :key="c.id" class="card-row" @click="openCard(c)"><span class="n">{{ c.name }}</span><span class="m">{{ c.cat }} · {{ c.circle }}</span><span class="m" :class="{due:c.next&&c.next<=todayKey}">{{ c.next? 'next '+c.next.slice(5) : '' }}</span></button>
+      <button class="chip" style="margin-top:8px" @click="openCard(null)">+ New card</button>
+    </div>
+  </section>
+
+  <section>
     <div class="sh"><h2>Last two weeks</h2><span>{{ weekLabel }}</span></div>
     <div class="stats">
       <div class="stat"><b class="mono">{{ streak }}</b><span>day streak</span></div>
@@ -261,16 +368,23 @@ section{margin-top:28px}
     <div class="sh"><h2>এই সপ্তাহের আদব</h2><span class="mono">{{ bookIndex+1 }} / 30</span></div>
     <div class="ttl">{{ chapter[0] }}</div>
     <div class="src">নবীজির পথে মানুষের মন জয় · তিনটি দৈনিক কাজ, প্রতিদিন টিক দিন</div>
-    <div v-for="(item,ix) in chapter[1]" :key="ix">
-      <div class="item">{{ item }}</div>
+    <div v-for="it in deck" :key="it.key">
+      <div class="item"><span class="txt"><span v-if="it.review" class="tag">রিভিউ · অধ্যায় {{ it.ch+1 }}</span>{{ it.text }}</span><span class="sc mono">{{ it.yes }}✓ {{ it.no }}✗</span></div>
       <div class="ticks">
-        <button v-for="d in weekDays" :key="d.k" :class="{on:adabOn(ix,d.k),today:d.k===todayKey}" @click="toggleAdab(ix,d.k)">{{ d.bn }}</button>
+        <button v-for="d in weekDays" :key="d.k" :class="{yes:ansOf(it.key,d.k)===1,no:ansOf(it.key,d.k)===0,today:d.k===todayKey}" :disabled="d.k>todayKey" @click="cycleAns(it.key,d.k)">{{ ansOf(it.key,d.k)===1?'✓':ansOf(it.key,d.k)===0?'✗':d.bn }}</button>
       </div>
     </div>
-    <div class="q"><b>রবিবারের প্রশ্ন</b>{{ chapter[2] }}</div>
+    <p class="legend">প্রতিদিন একবার ট্যাপ = হ্যাঁ ✓, দুবার = না ✗, তিনবার = খালি। সপ্তাহ শেষে প্রতিটি কাজ নিজে থেকেই গ্রেড হয় (Anki নিয়ম): ৫+ হ্যাঁ → ৬ সপ্তাহ পরে রিভিউ · ৩–৪ → ২ সপ্তাহ পরে · ২ বা কম → পরের সপ্তাহে আবার।</p>
+    <div class="q">
+      <b>রবিবারের প্রশ্ন</b>{{ chapter[2] }}
+      <div class="ans">
+        <button class="yes" :class="{sel:sundayAns===1}" @click="setSunday(1)">হ্যাঁ</button>
+        <button class="no" :class="{sel:sundayAns===0}" @click="setSunday(0)">না</button>
+      </div>
+    </div>
     <div class="nav">
       <button @click="shiftBook(-1)"><ico n="left"></ico>আগের</button>
-      <span>অধ্যায় বদলাতে চাইলে</span>
+      <span>{{ adabState.weeksDone }} সপ্তাহ সম্পন্ন · {{ pendingReviews }} রিভিউ বাকি</span>
       <button @click="shiftBook(1)">পরের<ico n="right"></ico></button>
     </div>
   </section>
@@ -297,8 +411,6 @@ section{margin-top:28px}
 
   <footer class="foot">
     <button @click="sheet=true"><ico n="sliders"></ico>Habits &amp; settings</button>
-    <button @click="exportData"><ico n="download"></ico>Export</button>
-    <button @click="importData"><ico n="upload"></ico>Import</button>
     <span class="state">{{ saveState }}</span>
     <input type="file" ref="file" accept="application/json,.json" style="display:none" @change="onFile">
   </footer>
@@ -319,7 +431,32 @@ section{margin-top:28px}
       <input type="number" min="0" max="60" v-model.number="settings.lead">
       <label>Latitude, longitude (default Dhaka)</label>
       <div class="grid2"><input type="number" step="0.0001" v-model.number="settings.lat"><input type="number" step="0.0001" v-model.number="settings.lon"></div>
+      <label>Backup</label>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Your data lives only on this phone. Export saves a copy (and copies it to the clipboard); Import restores it on a new phone or after reinstalling.</div>
+      <div class="grid2"><button class="btn quiet" @click="exportData"><ico n="download"></ico>Export</button><button class="btn quiet" @click="importData"><ico n="upload"></ico>Import</button></div>
       <button class="btn primary" @click="saveSettings">Save</button>
+    </div>
+  </div>
+
+  <div v-if="card" class="sheet-bg" @click.self="card=null">
+    <div class="sheet">
+      <h3>{{ card.id? card.name : 'New card' }} <button @click="card=null" aria-label="Close"><ico n="x"></ico></button></h3>
+      <label>Name · how we're connected</label>
+      <input v-model="card.name" placeholder="Name"><input v-model="card.how" placeholder="e.g. Core team, met at 2023 outage">
+      <div class="grid2">
+        <div><label>Category</label><select v-model="card.cat"><option v-for="c in CATS" :key="c" :value="c">{{ c }}</option></select></div>
+        <div><label>Circle</label><select v-model="card.circle"><option value="inner 5">inner 5 · weekly</option><option value="close 15">close 15 · 2–3 weeks</option><option value="good 50">good 50 · monthly</option><option value="known 150">known 150 · quarterly</option></select></div>
+      </div>
+      <label>Family</label><textarea v-model="card.family" placeholder="spouse, children's names and ages, parents' health"></textarea>
+      <label>Cares about</label><textarea v-model="card.cares" placeholder="what they talk about unprompted"></textarea>
+      <label>Avoid</label><textarea v-model="card.avoid" placeholder="sensitive topics"></textarea>
+      <label>Last contact · what they said</label><textarea v-model="card.lastNote" placeholder="one line"></textarea>
+      <div class="grid2"><div><label>Last date</label><input type="date" v-model="card.last"></div><div><label>Next touch</label><input type="date" v-model="card.next"></div></div>
+      <label>I can offer</label><input v-model="card.offer" placeholder="intro, a book, a technical answer, a du'a">
+      <label>My ask</label><input v-model="card.ask" placeholder="small and specific, or none">
+      <label>Opener</label><input v-model="card.opener" placeholder="the one question you'll start with">
+      <button class="btn primary" @click="commitCard">Save card</button>
+      <button v-if="card.id" class="del" @click="deleteCard">Delete card</button>
     </div>
   </div>
 </div>
@@ -344,6 +481,24 @@ const PRAYERS=[['fajr','Fajr'],['dhuhr','Dhuhr'],['asr','Asr'],['maghrib','Maghr
 const OFFICE=['dhuhr','asr','maghrib'];
 const DAY_START=4.5, DAY_END=22.5;
 const BOOK_START='2026-09-20';
+const CATS=['office','deen','neighbour','relatives','friends','business','well-wisher','junior'];
+const HINTS={
+  Sat:{new:{cat:'neighbour',who:'the man praying beside you at Fajr',where:'05:05 Fajr, home mosque: name, how long here'},old:{cat:'relatives',who:'an uncle or aunt not seen since Eid',where:'afternoon visit, take the kids'}},
+  Sun:{new:{cat:'office',who:'the colleague from another department at Dhuhr jamaat',where:'12:55 office jamaat, then walk to the canteen together'},old:{cat:'office',who:'an old Robi colleague you drifted from',where:'commute call'}},
+  Mon:{new:{cat:'junior',who:'a junior from another RAN/Core team',where:'after 4:15 Asr, tea'},old:{cat:'friends',who:'a KUET or BRAC friend',where:'commute call'}},
+  Tue:{new:{cat:'deen',who:'the imam or a mosque elder',where:'05:05 Fajr, home mosque'},old:{cat:'deen',who:'old madrasa teacher or a mentor',where:'commute call'}},
+  Wed:{new:{cat:'business',who:'a recent PathakBari customer',where:'lunch call: why they ordered, what they could not find'},old:{cat:'business',who:'the Nilkhet supplier',where:'evening call: what is selling, thank for a specific order'}},
+  Thu:{new:{cat:'office',who:'the Core/Transport/IT person you only emailed',where:'11:00, or after 5:55 Maghrib jamaat'},old:{cat:'junior',who:'a junior you mentored who moved on',where:'commute call'}},
+  Fri:{new:{cat:'well-wisher',who:'the friend-of-a-friend you keep seeing',where:'walk to Jumu\'ah with a neighbour; after salah'},old:{cat:'well-wisher',who:'the senior who once helped your career',where:'after Asr, call'}}};
+const QS={
+  relatives:{q:['How is [child/parent] now?','What are you busy with these days?','Anything I can help with: school, a hospital contact?'],s:'family news and the PhD plan; ask for du\'a, not admiration'},
+  office:{q:['What is the hardest thing on your plate this quarter?','How does your team see our RAN changes?','Who should I know in your team?'],s:'one thing you built and one problem you are stuck on'},
+  deen:{q:['How long have you been praying here?','Which lesson or lecture helped you lately?','Is anyone in the jama\'at unwell or absent?'],s:'what you are practising this week from the book'},
+  neighbour:{q:['How long have you lived here?','Anything in the building that needs sorting?','Do your children go to school nearby?'],s:'your children, offer help with a building issue'},
+  business:{q:['What made you order from us?','What book could you not find anywhere?','What would make you recommend PathakBari?'],s:'what is new in the shop; ask for one referral'},
+  junior:{q:['What are you trying to learn this year?','What is blocking you?','Whom do you want to meet? I may know them.'],s:'a mistake you made at their stage, and one tool you built'},
+  'well-wisher':{q:['What has changed since we last talked?','What is one thing going well right now?','What are you worried about?'],s:'the paper and the PhD plan; ask for one piece of advice'},
+  friends:{q:['What has changed since we last talked?','What is going well right now?','What are you worried about?'],s:'something honest about your week, not a highlight reel'}};
 const BOOK=[
 ["তিরস্কার নয়, অভিযোগ নয়: সবর ও শুকরের জীবন",["কাউকে \"কেন করলে / কেন করলে না\" বলিনি (পরিবার, টিম, ড্রাইভার, দোকানদার)।","আজ একটা কিছু খারাপ হয়েছে: অভিযোগের বদলে \"আলহামদুলিল্লাহ\" বলেছি বা চুপ থেকেছি।","একটা সত্যিকারের অন্যায় দেখেছি: একবার, গোপনে, নরমভাবে শুধরে দিয়েছি, ধমক দিয়ে নয়।"],"এই সপ্তাহে কাকে তিরস্কার করেছি, আর তার বদলে কী করেছি?"],
 ["শুকরিয়া: মানুষের কৃতজ্ঞতায় আল্লাহর কৃতজ্ঞতা",["একজনকে নাম ধরে, একটি নির্দিষ্ট কাজের জন্য ধন্যবাদ দিয়েছি।","একটি উপকারের প্রতিদান দিয়েছি, না পারলে তার জন্য দু'আ করেছি।","কাজের প্রশংসা করেছি, মানুষটির পুরোটার নয়; বাড়িয়ে বলিনি।"],"এই সপ্তাহে এমন কাকে ধন্যবাদ দিয়েছি, যাকে সাধারণত দিতাম না?"],
@@ -422,11 +577,14 @@ function load(){ try{ const raw=localStorage.getItem(LS); if(raw){ const s=JSON.
 function migrate(s){
   if(!Array.isArray(s.habits)||!s.habits.length) s.habits=DEFAULT_HABITS.map(x=>({...x}));
   if(!s.habits.some(x=>x.id==='quran')){ const i=s.habits.findIndex(x=>x.id==='english'); s.habits.splice(i+1,0,{id:'quran',name:'Quran 5–10 min',when:'07:00'}); }
-  if(!s.days) s.days={}; if(!s.weeks) s.weeks={};
+  if(!s.days) s.days={}; if(!s.weeks) s.weeks={}; if(!Array.isArray(s.people)) s.people=[];
+  if(!s.habits.some(x=>x.id==='people')){ const i=s.habits.findIndex(x=>x.id==='build'); s.habits.splice(i<0?s.habits.length:i+1,0,{id:'people',name:'People: 1 new + 1 old',when:'any'}); }
   const st=s.settings||(s.settings={});
   if(st.asr===undefined) st.asr='hanafi'; if(st.lead===undefined) st.lead=10; if(!st.lat) st.lat=23.8103; if(!st.lon) st.lon=90.4125;
   if(st.remind===undefined) st.remind=false; if(!st.jamaat) st.jamaat={fajr:'05:05',dhuhr:'12:55',asr:'16:15',isha:'20:00'};
   if(st.bookOffset===undefined) st.bookOffset=0; if(!st.theme) st.theme='auto';
+  if(!s.adab||!s.adab.items){ const ws=weekStart(new Date()), st0=new Date(BOOK_START+'T00:00:00'); const old=s.adab||{}; const cur=old.current!==undefined?old.current:Math.max(0,Math.min(BOOK.length-1,Math.round((ws-st0)/(7*864e5))+st.bookOffset));
+    s.adab={current:cur,weekKey:old.weekKey||keyOf(ws),queue:old.queue||BOOK.map((_,i)=>i).filter(i=>i!==cur),items:{},weeksDone:0}; }
   return s;
 }
 
@@ -511,12 +669,54 @@ createApp({
     function toggleHabit(id,ev){ const d=today.value; d.done[id]=!d.done[id]; buzz(15); const box=ev.currentTarget.querySelector('.box'); if(window.gsap&&box&&d.done[id]) gsap.fromTo(box,{scale:.6},{scale:1,duration:.5,ease:'elastic.out(1,.45)'}); }
     function emails(n){ const d=today.value; d.emails=Math.max(0,(d.emails||0)+n); }
 
-    const bookIndex=computed(()=>{ const ws=weekStart(now.value), st=new Date(BOOK_START+'T00:00:00'); const i=Math.round((ws-st)/(7*864e5))+settings.value.bookOffset; return Math.max(0,Math.min(BOOK.length-1,i)); });
+    const adabState=computed(()=>state.adab);
+    const calWeekKey=computed(()=>keyOf(weekStart(now.value)));
+    const addWeeks=(k,n)=>{ const d=new Date(k+'T00:00:00'); d.setDate(d.getDate()+7*n); return keyOf(d); };
+    const weekKeys=wk=>Array.from({length:7},(_,i)=>{ const d=new Date(wk+'T00:00:00'); d.setDate(d.getDate()+i); return keyOf(d); });
+    const wkRec=wk=>{ if(!state.weeks[wk]) state.weeks[wk]={}; const w=state.weeks[wk]; if(!w.a) w.a={}; return w; };
+    function deckFor(ch,wk){ const a=state.adab, keys=[]; for(let ix=0;ix<3;ix++) keys.push(ch+'-'+ix);
+      const due=Object.entries(a.items).filter(([k,v])=>v.due<=wk&&!keys.includes(k)).sort((x,y)=>x[1].due<y[1].due?-1:1).slice(0,3).map(([k])=>k);
+      return keys.concat(due).map(k=>{ const [c,ix]=k.split('-').map(Number); return {key:k,ch:c,ix,text:BOOK[c][1][ix],review:c!==ch}; }); }
+    function gradeWeek(wk,ch){ const a=state.adab, w=wkRec(wk), days=weekKeys(wk);
+      for(const it of deckFor(ch,wk)){ const ans=w.a[it.key]||{}; const y=days.filter(k=>ans[k]===1).length; const ivl=y>=5?6:(y>=3?2:1);
+        const prev=a.items[it.key]||{lapses:0,reps:0}; a.items[it.key]={due:addWeeks(wk,ivl),ivl,reps:prev.reps+1,lapses:prev.lapses+(ivl===1?1:0),last:y}; }
+      a.weeksDone=(a.weeksDone||0)+1; }
+    function applyPending(){ const a=state.adab; let guard=0; while(a.weekKey<calWeekKey.value&&guard++<60){ gradeWeek(a.weekKey,a.current); a.weekKey=addWeeks(a.weekKey,1); a.current=a.queue.length?a.queue.shift():(a.current+1)%BOOK.length; } }
+    const bookIndex=computed(()=>state.adab.current);
     const chapter=computed(()=>BOOK[bookIndex.value]);
-    const week=()=>{ const k=keyOf(weekStart(now.value)); if(!state.weeks[k]) state.weeks[k]={}; const w=state.weeks[k]; if(!w.c) w.c={}; return w; };
-    const adabOn=(ix,k)=>{ const w=week(); return !!(w.c[ix]&&w.c[ix][k]); };
-    function toggleAdab(ix,k){ const w=week(); if(!w.c[ix]) w.c[ix]={}; w.c[ix][k]=!w.c[ix][k]; buzz(15); }
-    function shiftBook(n){ const next=bookIndex.value+n; if(next>=0&&next<BOOK.length) settings.value.bookOffset+=n; }
+    const deck=computed(()=>{ const w=wkRec(calWeekKey.value), days=weekDays.value.map(d=>d.k); return deckFor(state.adab.current,calWeekKey.value).map(it=>{ const ans=w.a[it.key]||{}; return {...it,yes:days.filter(k=>ans[k]===1).length,no:days.filter(k=>ans[k]===0).length}; }); });
+    const ansOf=(key,k)=>{ const w=state.weeks[calWeekKey.value]; return w&&w.a&&w.a[key]? w.a[key][k] : undefined; };
+    function cycleAns(key,k){ if(k>todayKey.value) return; const w=wkRec(calWeekKey.value); if(!w.a[key]) w.a[key]={}; const v=w.a[key][k]; w.a[key][k]= v===undefined?1:(v===1?0:undefined); if(w.a[key][k]===undefined) delete w.a[key][k]; buzz(12); }
+    const sundayAns=computed(()=>{ const w=state.weeks[calWeekKey.value]; return w? w.sq : undefined; });
+    function setSunday(v){ const w=wkRec(calWeekKey.value); w.sq= w.sq===v? undefined : v; buzz(15); }
+    const pendingReviews=computed(()=>Object.values(state.adab.items).filter(v=>v.due>calWeekKey.value).length);
+    function shiftBook(n){ const a=state.adab; const next=a.current+n; if(next<0||next>=BOOK.length) return; a.current=next; a.queue=a.queue.filter(i=>i!==next); }
+
+    const blankTouch=()=>({name:'',cat:'',prep:false,met:false,showq:false,note:''});
+    function dayTouch(k){ if(!state.days[k]) state.days[k]=blankDay(); const d=state.days[k]; if(!d.touch) d.touch={new:blankTouch(),old:blankTouch()}; return d.touch; }
+    const touch=computed(()=>dayTouch(todayKey.value));
+    const dayName=k=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(k+'T00:00:00').getDay()];
+    const hint=kind=>HINTS[dayName(todayKey.value)][kind];
+    const isFriday=computed(()=>now.value.getDay()===5);
+    const weekRec=computed(()=>{ const k=calWeekKey.value; if(!state.weeks[k]) state.weeks[k]={}; return state.weeks[k]; });
+    const touchesDone=computed(()=>(touch.value.new.met?1:0)+(touch.value.old.met?1:0));
+    function toggleMet(kind){ const t=touch.value[kind]; t.met=!t.met; if(t.met&&!t.cat) t.cat=hint(kind).cat; today.value.done.people=touch.value.new.met&&touch.value.old.met; buzz(15); }
+    const card=ref(null);
+    const newCard=()=>({id:'',name:'',how:'',cat:'office',circle:'good 50',family:'',cares:'',avoid:'',lastNote:'',last:'',next:'',offer:'',ask:'',opener:''});
+    function openCard(c){ card.value=c? JSON.parse(JSON.stringify(c)) : newCard(); }
+    function commitCard(){ const c=card.value; if(!c.name.trim()){ alert('Name is needed.'); return; } if(!c.id){ c.id='p'+Date.now(); state.people.push(c); } else { const i=state.people.findIndex(x=>x.id===c.id); if(i>=0) state.people[i]=c; else state.people.push(c); } card.value=null; }
+    function deleteCard(){ if(!confirm('Delete this card?')) return; state.people=state.people.filter(x=>x.id!==card.value.id); card.value=null; }
+    const circleWeeks={'inner 5':1,'close 15':3,'good 50':4,'known 150':12};
+    function saveCard(kind){ const t=touch.value[kind]; const name=t.name.trim(); if(!name) return; let c=state.people.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());
+      if(!c){ c=newCard(); c.id='p'+Date.now(); c.name=name; c.cat=t.cat||hint(kind).cat; state.people.push(c); }
+      c.last=todayKey.value; if(t.note) c.lastNote=t.note; if(!c.next||c.next<=todayKey.value) c.next=addWeeks(todayKey.value,circleWeeks[c.circle]||4).slice(0,10);
+      openCard(c); }
+    function useCard(c){ const t=touch.value.old; t.name=c.name; t.cat=c.cat; }
+    const dueCards=computed(()=>state.people.filter(c=>c.next&&c.next<=todayKey.value).sort((a,b)=>a.next<b.next?-1:1).slice(0,5));
+    const sortedCards=computed(()=>[...state.people].sort((a,b)=>(a.next||'9999')<(b.next||'9999')?-1:1));
+
+    const isDone=(k,id)=>!!(state.days[k]&&state.days[k].done[id]);
+    function toggleDay(k,id){ if(k>todayKey.value) return; if(!state.days[k]) state.days[k]=blankDay(); state.days[k].done[id]=!state.days[k].done[id]; buzz(12); }
 
     watch(sheet,v=>{ if(v) draftHabits.value=state.habits.map(x=>({...x})); });
     function saveSettings(){ const next=draftHabits.value.filter(x=>x.name.trim()); if(next.length) state.habits=next.map(x=>({...x,name:x.name.trim()})); sheet.value=false; }
@@ -556,7 +756,7 @@ createApp({
     onMounted(()=>{
       loadTimer(); connectDb(); drawChart();
       window.addEventListener('resize',()=>echart&&echart.resize());
-      setInterval(()=>{ now.value=new Date(); },15000);
+      applyPending(); setInterval(()=>{ now.value=new Date(); applyPending(); },15000);
       scheduleNotifications();
       watch([effective,()=>settings.value.remind,()=>settings.value.lead],scheduleNotifications);
       if(window.gsap&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&dial.value){
@@ -570,8 +770,9 @@ createApp({
     return { state, settings, today, todayKey, doneToday, habitRows, weekDays, weekLabel, weekDots, streak, emailsWeek, focusWeek, dateLabel, greeting, nowStr,
       pt, arc, nowAngle, prayerMarks, nextPrayerText, togglePrayed, toggleRemind,
       presets, focusSec, timer, ringLen, ringOffset, clockText, presetLabel, setPreset, startTimer, resetTimer, distract, saveTimer,
-      toggleHabit, emails, bookIndex, chapter, adabOn, toggleAdab, shiftBook,
-      sheet, draftHabits, saveSettings, saveState, exportData, importData, onFile, file, dial, chart, distBtn };
+      toggleHabit, emails, bookIndex, chapter, shiftBook, adabState, deck, ansOf, cycleAns, sundayAns, setSunday, pendingReviews, isDone, toggleDay,
+      sheet, draftHabits, saveSettings, saveState, exportData, importData, onFile, file, dial, chart, distBtn,
+      CATS, HINTS, QS, touch, dayTouch, hint, isFriday, weekRec, touchesDone, toggleMet, card, openCard, commitCard, deleteCard, saveCard, useCard, dueCards, sortedCards };
   }
 }).mount('#app');
 })();
