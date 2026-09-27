@@ -168,6 +168,22 @@ section{margin-top:28px}
 .adab .nav{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--muted)}
 .adab .nav button{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:9px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-weight:600}
 
+/* 3 tasks */
+.tk .row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 0;border-top:1px solid var(--line)}
+.tk .row:first-of-type{border-top:0}
+.tk .row .n{font-size:12px;color:var(--muted);min-width:14px}
+.tk .row .t{flex:1;font-weight:500}
+.tk .row.on .t{color:var(--muted);text-decoration:line-through}
+.tk .row.on .box{background:var(--good);border-color:var(--good);color:#fff}
+.tk .row.on .box svg{opacity:1}
+.tk .row .deep{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:1px 6px}
+.tk .empty{font-size:14px;color:var(--muted);padding:6px 0}
+.tk .next{margin-top:16px;padding:12px;border-radius:14px;border:1px dashed var(--line)}
+.tk .next.full{border-style:solid;border-color:var(--good)}
+.tk .next h3{margin:0 0 8px;font-size:15px;display:flex;justify-content:space-between;align-items:baseline}
+.tk .next h3 span{font-size:12px;color:var(--muted);font-weight:500}
+.tk .next input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--surface);margin-bottom:6px}
+
 /* people */
 .pp .due{background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
 .pp .due b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
@@ -288,6 +304,20 @@ section{margin-top:28px}
       <button class="toggle" :class="{on:settings.remind}" @click="toggleRemind"><ico n="bell"></ico>{{ settings.remind ? 'Reminders on' : 'Remind me' }}</button>
     </div>
   </div>
+
+  <section class="tk">
+    <div class="sh"><h2>Today's 3 tasks</h2><span>written at yesterday's shutdown</span></div>
+    <template v-if="todayTasks.some(t=>t.text.trim())">
+      <button v-for="(t,i) in todayTasks" :key="i" v-show="t.text.trim()" class="row" :class="{on:t.done}" @click="t.done=!t.done">
+        <span class="box"><ico n="check"></ico></span><span class="n mono">{{ i+1 }}</span><span class="t">{{ t.text }}</span><span v-if="i===0" class="deep">deep block</span>
+      </button>
+    </template>
+    <div v-else class="empty">Nothing written yesterday. Write tomorrow's three below at 17:45.</div>
+    <div class="next" :class="{full:tomorrowFull}">
+      <h3>{{ tomorrowLabel }}'s 3 · shutdown 17:45 <span>{{ tomorrowFull ? 'shutdown ticked' : 'fill all 3 to tick shutdown' }}</span></h3>
+      <input v-for="(t,i) in tomorrowTasks" :key="i" v-model="t.text" @input="onTomorrowInput" :placeholder="i===0 ? '1 · most important: becomes the deep block' : (i+1)+' ·'">
+    </div>
+  </section>
 
   <section>
     <div class="sh"><h2>Today</h2><span class="mono">{{ doneToday }} / {{ state.habits.length }}</span></div>
@@ -715,6 +745,14 @@ createApp({
     const dueCards=computed(()=>state.people.filter(c=>c.next&&c.next<=todayKey.value).sort((a,b)=>a.next<b.next?-1:1).slice(0,5));
     const sortedCards=computed(()=>[...state.people].sort((a,b)=>(a.next||'9999')<(b.next||'9999')?-1:1));
 
+    function tasksOf(k){ if(!state.days[k]) state.days[k]=blankDay(); const d=state.days[k]; if(!Array.isArray(d.tasks)) d.tasks=[{text:'',done:false},{text:'',done:false},{text:'',done:false}]; return d.tasks; }
+    const tomorrowKey=computed(()=>{ const d=new Date(now.value); d.setDate(d.getDate()+(d.getDay()===4?3:1)); return keyOf(d); }); // Thursday plans Sunday
+    const tomorrowLabel=computed(()=>{ const d=new Date(tomorrowKey.value+'T00:00:00'); return d.toLocaleDateString('en-GB',{weekday:'long'}); });
+    const todayTasks=computed(()=>tasksOf(todayKey.value));
+    const tomorrowTasks=computed(()=>tasksOf(tomorrowKey.value));
+    const tomorrowFull=computed(()=>tomorrowTasks.value.every(t=>t.text.trim()));
+    function onTomorrowInput(){ if(tomorrowFull.value&&!today.value.done.shutdown){ today.value.done.shutdown=true; buzz(20); } }
+
     const isDone=(k,id)=>!!(state.days[k]&&state.days[k].done[id]);
     function toggleDay(k,id){ if(k>todayKey.value) return; if(!state.days[k]) state.days[k]=blankDay(); state.days[k].done[id]=!state.days[k].done[id]; buzz(12); }
 
@@ -755,6 +793,7 @@ createApp({
 
     onMounted(()=>{
       loadTimer(); connectDb(); drawChart();
+      { const first=todayTasks.value[0].text.trim(); if(first&&!timer.running&&!timer.task) timer.task=first; }
       window.addEventListener('resize',()=>echart&&echart.resize());
       applyPending(); setInterval(()=>{ now.value=new Date(); applyPending(); },15000);
       scheduleNotifications();
@@ -772,6 +811,7 @@ createApp({
       presets, focusSec, timer, ringLen, ringOffset, clockText, presetLabel, setPreset, startTimer, resetTimer, distract, saveTimer,
       toggleHabit, emails, bookIndex, chapter, shiftBook, adabState, deck, ansOf, cycleAns, sundayAns, setSunday, pendingReviews, isDone, toggleDay,
       sheet, draftHabits, saveSettings, saveState, exportData, importData, onFile, file, dial, chart, distBtn,
+      todayTasks, tomorrowTasks, tomorrowLabel, tomorrowFull, onTomorrowInput,
       CATS, HINTS, QS, touch, dayTouch, hint, isFriday, weekRec, touchesDone, toggleMet, card, openCard, commitCard, deleteCard, saveCard, useCard, dueCards, sortedCards };
   }
 }).mount('#app');
